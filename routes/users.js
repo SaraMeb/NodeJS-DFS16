@@ -1,7 +1,9 @@
 var express = require('express');
+const Mango = require('../bin/mongo');
 var createError = require('http-errors');
 var router = express.Router();
-const Mango = require('../bin/mongo');
+var uniqid = require('uniqid');
+var crypto = require('crypto');
 
 /* login */
 router.put('/', function(req, res, next) {
@@ -16,9 +18,8 @@ router.post('/', function(req, res, next) {
   // mdp en clair
   // password_confirm inutile
   // intégrité des données
-  let datas = {};
   let errors = [];
-  if (!req.body.username || !/([\w\s]{6,}/.test(req.body.username)) {
+  if (!req.body.username || !/^([\w\s]{6,})$/.test(req.body.username)) {
     errors.push('Nom utilisateur');
   }
   if (!req.body.email || !/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(req.body.email)) {
@@ -31,25 +32,39 @@ router.post('/', function(req, res, next) {
     errors.push('Confirmation de mot de passe');
   }
 
+  if(errors.length) {
+    return res.json({
+      status: false,
+      message: "Merci de vérifier les champs : "+errors.join(', ')
+    })
+  }
+
   //mdp en clair
-  let password = '';
-  let salt = '';
+  let salt = uniqid();
+  let password = crypto.createHash('sha256').update(req.body.password+salt).digest('hex');
   //sha256(password+salt)
   let datas = {
     username: req.body.username,
     email: req.body.email,
-    password: req.body.password,
+    password: password,
+    salt:salt
   }
 
   Mongo.getInstance()
   .collection('users')
   .insertOne(datas,
     function(err, result) {
-      console.log(result);
+      if (err) {
+        return  res.json({
+            status : false,
+            message: err.message
+          })
+
+      }
+      return res.json({
+        status: true
+      })
   })
-  // res.json({
-  //   status : true
-  // })
 });
 
 // => à partir d'ici l'utilisateur doit être identifié
@@ -63,7 +78,7 @@ router.get('/', function(req, res, next) {
   status : true,
   datas : {
     email: 'a@a.com',
-    nom: 'John Doe',
+    username: 'John Doe',
   }
   })
 });

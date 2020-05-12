@@ -16,7 +16,8 @@
     "mongodb": "^3.5.7",
     "morgan": "~1.9.1",
     "node-sass-middleware": "0.11.0",
-    "twig": "~0.10.3"
+    "twig": "~0.10.3",
+    "uniqid": "^5.2.0"
   },
   "devDependencies": {
     "node-sass": "^4.14.1",
