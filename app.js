@@ -4,12 +4,28 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
+const session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 
 var app = express();
+
+// session
+app.use(session({
+  key: null,
+  name: 'session',
+  token: null,
+  secure: true,
+  resave: false,
+  sameSite: true,
+  httpOnly: true,
+  connect: false,
+  saveUninitialized: true,
+  maxAge: 60 * 60 * 1000, // 1 hour
+  secret: 'it-akademy',
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

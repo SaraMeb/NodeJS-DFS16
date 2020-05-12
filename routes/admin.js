@@ -4,14 +4,14 @@ var router = express.Router();
 
 /* admin avec formulaire login/creation */
 router.get('/', function(req, res, next) {
-  if(true || req.session)
+  if(req.session && req.session.user)
     return next() ;
   res.render('admin/index', {title:"flipBook"});
 });
 
 router.use(function(req, res, next) {
   // si la session n'exite pas
-  if(false && !req.session)
+  if(!req.session || !req.session.user)
     return next(createError(403));
   return next();
 

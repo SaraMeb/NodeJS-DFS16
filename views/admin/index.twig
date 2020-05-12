@@ -12,7 +12,7 @@
             <h3 class="mb-0">Identification</h3>
           </div>
         <div class="card-body">
-          <form class="form" role="form" autocomplete="off" id="formLogin" novalidate="" method="POST">
+          <form class="form" action="/users" method="POST">
               <div class="form-group">
                   <label for="email">Email</label>
                   <input type="text" class="form-control form-control-lg rounded-0" name="email" id="email">
@@ -21,7 +21,7 @@
                   <label>Password</label>
                   <input type="password" name="password" class="form-control form-control-lg rounded-0" id="password" >
               </div>
-              <button type="submit" class="btn btn-secondary btn-lg float-right" id="btnLogin">Identification</button>
+              <input type="submit" class="btn btn-secondary btn-lg float-right" id="btnLogin" value="Identification">
           </form>
         </div>
         <div class="card-footer">
