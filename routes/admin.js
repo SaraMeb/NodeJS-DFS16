@@ -4,6 +4,8 @@ var router = express.Router();
 const Mongo = require('../bin/mongo');
 var uniqid = require('uniqid');
 var multer  = require('multer');
+const ObjectId = require('mongodb').ObjectId;
+
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -89,32 +91,72 @@ router.post('/', upload.single('file'), function(req, res, next) {
 
 /* detail d'un filpbook */
 router.get('/:id', function(req, res, next) {
-  res.json({status : true, datas:{}});
-});
+  let bookId = req.params.id;
+
+    Mongo.getInstance()
+    .collection('flipbooks')
+    .findOne({_id: ObjectId(bookId)}, function (err, result) {
+        if (err) {
+          return res.json({
+            status: false,
+            message: err.message
+          })
+        }
+        return res.json({status : true, result: result});
+    })
+  });
+
 
 /* edition d'un filpbook */
 router.put('/:id', function(req, res, next) {
-  res.json({status : true});
-});
+  let errors = [];
+  if (!req.body.title) {
+    errors.push('Titre');
+  }
+  if (!req.body.description) {
+    errors.push('Description');
+  }
 
-/* suppression d'un filpbook */
-router.delete('/:id', function(req, res, next) {
-  bookId = req.params.id,
+  if(errors.length) {
+    return next(createError(412, "Merci de vérifier les champs : "+errors.join(', ')));
+  }
+  console.log(req.body);
+  let bookId = req.params.id;
+  let datas = {
+    title: req.body.title,
+    description: req.body.description,
+  }
   Mongo.getInstance()
   .collection('flipbooks')
-  .deleteOne({file : bookId},
+  .updateOne({_id : ObjectId(bookId)}, {$set:datas},
     function(err, result) {
       if (err) {
-        if(err.message.indexOf('duplicate key') !== -1){
           return  res.json({
             status : false,
             message: err.message
           })
-        }
+
       }
-      res.redirect('/admin');
+      res.json({status : true});
   })
-  res.json({status : true});
+
+});
+
+/* suppression d'un filpbook */
+router.delete('/:id', function(req, res, next) {
+  // console.log(req.params.id);
+  let bookId = req.params.id;
+  Mongo.getInstance()
+  .collection('flipbooks')
+  .deleteOne({_id : ObjectId(bookId)}, function(err, result) {
+      if (err) {
+          return  res.json({
+            status : false,
+            message: err.message
+          })
+      }
+      res.json({status : true});
+  })
 });
 
 module.exports = router;

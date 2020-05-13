@@ -1,67 +1,95 @@
 // Delete flipbook
-document.getElementById('deleteFlipbook').addEventListener('click', function(event) {
+
+var deleteButtons = document.querySelectorAll(".deleteFlipbook");
+for (var i = 0; i < deleteButtons.length; i++) {
+  deleteButtons[i].addEventListener('click', function (event) {
     event.preventDefault();
-    console.log(event.target);
-    // var title = event.target.title.value;
-    // var description = event.target.description.value;
-    // var file = event.target.file.value;
-    //
-    // var datas = {
-    //     'title': title,
-    //     'description': description,
-    //     'file': file,
-    // };
-    // fetch('/admin', {
-    //     method: 'post',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify(datas)
-    // })
-    //     .then(function (r) { return r.json() })
-    //     .then(function (response) {
-    //         if (response.status) {
-    //             document.location.reload();
-    //         } else {
-    //             alert(response.message || 'Erreur');
-    //         }
-    //     })
-});
+      console.log(event.currentTarget);
+      // debugger;
+    var bookId = event.currentTarget.getAttribute('id');
+    console.log(bookId);
+    fetch('/admin/' + bookId, {
+        method: 'delete',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(function (r) {
+        return r.json()
+    })
+    .then(function (response) {
+        if (response.status) {
+            document.location.reload();
+        } else {
+            alert(response.message || 'Erreur');
+        }
+    })
+  });
 }
 
+// Update flipbook modal
 
+var updateButtons = document.querySelectorAll(".updateFlipbook");
+for (var i = 0; i < updateButtons.length; i++) {
+  updateButtons[i].addEventListener('click', function (event) {
+    event.preventDefault();
+      console.log(event.currentTarget);
+      // debugger;
+    var bookId = event.currentTarget.getAttribute('id');
+    console.log(bookId);
+    // debugger;
+    fetch('/admin/' + bookId, {
+        method: 'get',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(function (r) {
+      console.log(r);
+        return r.json()
+    })
+    .then(function (response) {
+        if (response.status) {
+          console.log(response.result);
+          document.getElementById('updatedTitleID').value = response.result._id;
+          document.getElementById('updatedTitle').value = response.result.title;
+          document.getElementById('updatedDescription').value = response.result.description;
+        } else {
+            alert(response.message || 'Erreur');
+        }
+    })
+  });
+}
 
-// document.getElementById('btnNewFlipbook').addEventListener('click', function(evt) {
-//   $('#myModal').modal('show');
-// })
-// Create flipbook
-// if(document.getElementById('addflipbook')){
-// document.getElementById('addflipbook').addEventListener('submit', function(event) {
-//     event.preventDefault();
-//     console.log(event.target);
-//     var title = event.target.title.value;
-//     var description = event.target.description.value;
-//     var file = event.target.file.value;
-//
-//     var datas = {
-//         'title': title,
-//         'description': description,
-//         'file': file,
-//     };
-//     fetch('/admin', {
-//         method: 'post',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(datas)
-//     })
-//         .then(function (r) { return r.json() })
-//         .then(function (response) {
-//             if (response.status) {
-//                 document.location.reload();
-//             } else {
-//                 alert(response.message || 'Erreur');
-//             }
-//         })
-// });
-// }
+// Update flipbook
+document.getElementById('editflipbook').addEventListener('submit', function(event) {
+    event.preventDefault();
+    console.log(event.target);
+    // debugger;
+    var bookId = event.target.id.value;
+    var title = event.target.title.value;
+    var description = event.target.description.value;
+
+    var datas = {
+        'title': title,
+        'description': description
+    };
+    fetch('/admin/' + bookId, {
+        method: 'put',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title:title,
+          description:description
+        })
+    })
+        .then(function (r) { return r.json() })
+        .then(function (response) {
+            if (response.status) {
+                document.location.reload();
+            } else {
+                alert(response.message || 'Erreur');
+            }
+        })
+});
