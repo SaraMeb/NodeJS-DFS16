@@ -26,7 +26,50 @@ router.get('/', function(req, res, next) {
 
 /* creation d'un filpbook */
 router.post('/', function(req, res, next) {
-  res.json({status : true});
+  console.log(req.body.description, req.body.title, req.body.file);
+  let errors = [];
+  if (!req.body.title) {
+    errors.push('Titre');
+  }
+  if (!req.body.description) {
+    errors.push('Description');
+  }
+  if (!req.body.file) {
+    errors.push('PDF !');
+  }
+
+  if(errors.length) {
+    return res.json({
+      status: false,
+      message: "Merci de vérifier les champs : "+errors.join(', ')
+    })
+  }
+  let datas = {
+    title: req.body.title,
+    description: req.body.description,
+    file: file
+  }
+
+  Mongo.getInstance()
+  .collection('flipbooks')
+  .insertOne(datas,
+    function(err, result) {
+      if (err) {
+        if(err.message.indexOf('duplicate key') !== -1){
+          return  res.json({
+            status : false,
+            message: err.message
+          })
+        }
+        return  res.json({
+          status : false,
+          message: 'Ce flipBook existe déjà !'
+        })
+      }
+      return res.json({
+        status: true
+      })
+  })
 });
 
 /* detail d'un filpbook */

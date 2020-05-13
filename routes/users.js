@@ -40,8 +40,8 @@ router.post('/', function(req, res, next) {
 
   // On vérifie l'intégrité des données
   let errors = [];
-  console.log(req.body.username || !/^([\w\s]{6,})$/.test(req.body.username));
-  if (!req.body.username) {
+  // console.log(req.body.username);
+  if (!req.body.username || !/^([\w\s]{6,})$/.test(req.body.username)) {
     errors.push('Nom utilisateur');
   }
   if (!req.body.email || !/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/.test(req.body.email)) {
