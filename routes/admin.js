@@ -1,7 +1,23 @@
 var express = require('express');
-const Mongo = require('../bin/mongo');
 var createError = require('http-errors');
 var router = express.Router();
+const Mongo = require('../bin/mongo');
+var uniqid = require('uniqid');
+var multer  = require('multer');
+
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, __dirname + "/../uploads");
+  },
+  filename: function (req, file, cb) {
+    let ext = file.originalname.substr(file.originalname.lastIndexOf('.'));
+    let fileName = uniqid('pdfFile-') + ext ;
+    console.log(fileName)
+    cb(null, fileName);
+  }
+});
+const upload = multer({storage: storage});
+
 
 /* admin avec formulaire login/creation */
 router.get('/', function(req, res, next) {
@@ -21,12 +37,18 @@ router.use(function(req, res, next) {
 
 /* retourne le dashboard */
 router.get('/', function(req, res, next) {
-  res.render('admin/dashboard', {title:"flipBook"});
+  Mongo.getInstance()
+  .collection('flipbooks')
+  .find()
+  .toArray((err, books) => {
+    res.render('admin/dashboard', {title:"Administartion des Flipbooks", books:books});
+  })
+
 });
 
 /* creation d'un filpbook */
-router.post('/', function(req, res, next) {
-  console.log(req.body.description, req.body.title, req.body.file);
+
+router.post('/', upload.single('file'), function(req, res, next) {
   let errors = [];
   if (!req.body.title) {
     errors.push('Titre');
@@ -34,22 +56,21 @@ router.post('/', function(req, res, next) {
   if (!req.body.description) {
     errors.push('Description');
   }
-  if (!req.body.file) {
+  if (!req.file) {
     errors.push('PDF !');
   }
 
   if(errors.length) {
-    return res.json({
-      status: false,
-      message: "Merci de vérifier les champs : "+errors.join(', ')
-    })
+    return next(createError(412, "Merci de vérifier les champs : "+errors.join(', ')));
   }
   let datas = {
     title: req.body.title,
     description: req.body.description,
-    file: file
+    file: req.file.filename,
+    publisher: req.session.user.username,
+    publishDate: new Date(),
+    status:'draft'
   }
-
   Mongo.getInstance()
   .collection('flipbooks')
   .insertOne(datas,
@@ -61,14 +82,8 @@ router.post('/', function(req, res, next) {
             message: err.message
           })
         }
-        return  res.json({
-          status : false,
-          message: 'Ce flipBook existe déjà !'
-        })
       }
-      return res.json({
-        status: true
-      })
+      res.redirect('/admin');
   })
 });
 
@@ -84,6 +99,21 @@ router.put('/:id', function(req, res, next) {
 
 /* suppression d'un filpbook */
 router.delete('/:id', function(req, res, next) {
+  bookId = req.params.id,
+  Mongo.getInstance()
+  .collection('flipbooks')
+  .deleteOne({file : bookId},
+    function(err, result) {
+      if (err) {
+        if(err.message.indexOf('duplicate key') !== -1){
+          return  res.json({
+            status : false,
+            message: err.message
+          })
+        }
+      }
+      res.redirect('/admin');
+  })
   res.json({status : true});
 });
 
