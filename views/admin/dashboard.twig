@@ -2,34 +2,27 @@
 
 {% block body %}
   <h1>Dashborad</h1>
-  <p>Admin {{title}}</p>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-6 col-md-8 mx-auto">
+  <p>Liste des flipbooks</p>
 
-        <div class="card rounded shadow shadow-sm">
-          <div class="card-header">
-            <h3 class="mb-0">Identification</h3>
-          </div>
-        <div class="card-body">
-          <form class="form" action="/users" method="POST">
-              <div class="form-group">
-                  <label for="email">Email</label>
-                  <input type="text" class="form-control form-control-lg rounded-0" name="email" id="email">
-              </div>
-              <div class="form-group">
-                  <label>Password</label>
-                  <input type="password" name="password" class="form-control form-control-lg rounded-0" id="password" >
-              </div>
-              <button type="submit" class="btn btn-secondary btn-lg float-right" id="btnLogin">Identification</button>
-          </form>
-        </div>
-        <div class="card-footer">
-          <a href="/users" class="float-right" id="btnLogin">Créer mon compte</button>
-        </div>
-        </div>
-      </div>
-    </div>
+  <button id="btnLogout" class="btn btn-secondary my-2">Déconnexion</button>
+{# <a href="#" class="float-right" id="btnNewFlipbook" data-modal-action="addflipbook">+ Nouveau FlipBook</button> #}
+
+
+<form>
+  <div class="form-group">
+    <label for="title">Titre du flipBook</label>
+    <input type="text" class="form-control" id="title" name="title" placeholder="Titre">
   </div>
+  <div class="form-group">
+    <label for="description">Description du flipBook</label>
+    <textarea class="form-control" id="description" name="description" rows="3">Description...</textarea>
+  </div>
+  <div class="custom-file">
+    <input type="file" name="file" class="custom-file-input" id="file">
+    <label class="custom-file-label" for="file">Choose file</label>
+  </div>
+  <input type="submit" class="btn btn-secondary float-right" id="addflipbook" value="Ajouter">
 
+
+</form>
 {% endblock %}

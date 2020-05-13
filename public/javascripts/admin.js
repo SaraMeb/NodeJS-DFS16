@@ -1,22 +1,34 @@
-document.getElementById('userName').addEventListener('click', function(evt) {
+// document.getElementById('btnNewFlipbook').addEventListener('click', function(evt) {
+//   $('#myModal').modal('show');
+// })
+// Create flipbook
+if(document.getElementById('addflipbook')){
+document.getElementById('addflipbook').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var title = event.target.title.value;
+    var description = event.target.description.value;
+    var file = event.target.file.value;
 
-})
-
-document.getElementById('logout').addEventListener('click', function(evt) {
-  fetch('/users', {
-    method: 'delete',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include'
-  }).then(function(r) {
-    return r.json()
-  }).then(fuunction(response) {
-    if(response.status) {
-      document.location.href = '/admin';
-    } else {
-      alert(response.message || 'Une erreur est survenue');
+    var datas = {
+        'title': title,
+        'description': description,
+        'file': file,
+    };
+    fetch('/admin', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(datas)
     }
-  })
-})
+    )
+        .then(function (r) { return r.json() })
+        .then(function (response) {
+            if (response.status) {
+                document.location.reload();
+            } else {
+                alert(response.message || 'Erreur');
+            }
+        })
+});
+}

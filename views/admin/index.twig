@@ -1,42 +1,69 @@
 {% extends 'admin/layout.twig' %}
 
 {% block body %}
-  <h1>Login interface</h1>
-  <p>Admin {{title}}</p>
+  <h1>Admin interface login</h1>
+
   <div class="container">
     <div class="row">
-      <div class="col-lg-6 col-md-8 mx-auto">
-
-        <div class="card rounded shadow shadow-sm">
+      <div class="col-lg-6 col-md-8" id="loginContainer">
+        <div class="card shadow shadow-sm">
           <div class="card-header">
             <h3 class="mb-0">Identification</h3>
           </div>
         <div class="card-body">
-          <form class="form" action="/users" method="POST">
-              <div class="form-group">
-                  <label for="username">Nom d'utilisateur</label>
-                  <input type="text" class="form-control form-control-lg rounded-0" name="username" id="username">
-              </div>
+          <form class="form" action="/users" method="POST" id="loginForm">
               <div class="form-group">
                   <label for="email">Email</label>
-                  <input type="text" class="form-control form-control-lg rounded-0" name="email" id="email">
+                  <input type="text" class="form-control" name="email" required>
               </div>
               <div class="form-group">
                   <label>Password</label>
-                  <input type="password" name="password" class="form-control form-control-lg rounded-0" id="password" >
+                  <input type="password" name="password" class="form-control" required>
               </div>
-              <div class="form-group">
-                  <label>Confirmation de mot de passe</label>
-                  <input type="password_confirm" name="password_confirm" class="form-control form-control-lg rounded-0" id="password_confirm" >
-              </div>
-              <input type="submit" class="btn btn-secondary btn-lg float-right" id="btnLogin" value="Identification">
+              <input type="submit" class="btn btn-secondary float-right" id="loginSubmit" value="Identification">
           </form>
         </div>
         <div class="card-footer">
-          <a href="/users" class="float-right" id="btnLogin">Créer mon compte</button>
+          <a href="#" class="float-right" id="btnRegister">Créer mon compte</a>
         </div>
         </div>
       </div>
     </div>
-  </div>
+
+    {# Création de compte #}
+    {# <div class="container">
+      <div class="row"> #}
+        <div class="col-lg-6 col-md-8 d-none" id="registerContainer">
+          <div class="card rounded shadow shadow-sm">
+            <div class="card-header">
+              <h3 class="mb-0">Création de compte</h3>
+            </div>
+          <div class="card-body">
+            <form class="form" action="/users" method="POST" id="registerForm">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" class="form-control" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" class="form-control" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmation de mot de passe</label>
+                    <input type="password" name="password_confirm" class="form-control"  required>
+                </div>
+                <input type="submit" class="btn btn-secondary float-right" id="registerSubmit" value="Créer mon compte">
+            </form>
+          </div>
+          <div class="card-footer">
+            <a href="#" class="float-right" id="btnLogin">Connexion</a>
+          </div>
+          </div>
+        </div>
+      {# </div>
+    </div> #}
 {% endblock %}

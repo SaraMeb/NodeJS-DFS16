@@ -1,20 +1,22 @@
 var express = require('express');
+const Mongo = require('../bin/mongo');
 var createError = require('http-errors');
 var router = express.Router();
 
 /* admin avec formulaire login/creation */
 router.get('/', function(req, res, next) {
-  if(req.session && req.session.user)
+  if(req.session.user) {
     return next() ;
+  }
   res.render('admin/index', {title:"flipBook"});
 });
 
 router.use(function(req, res, next) {
   // si la session n'exite pas
-  if(!req.session || !req.session.user)
+  if(!req.session || !req.session.user) {
     return next(createError(403));
+  }
   return next();
-
 })
 
 /* retourne le dashboard */
